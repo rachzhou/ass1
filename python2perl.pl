@@ -4,8 +4,9 @@
 # written by andrewt@cse.unsw.edu.au September 2014
 
 use Scalar::Util qw(looks_like_number);
-my $math = "[\+\-\/\%\=\>\<\*]";
-my $loops = "(if|while)";
+my $operators   = "[\+\-\/\%\=\>\<\!\|\^\&\~\*]";
+my $loops       = "(if|while)";
+
 
 while ($line = <>) {
     if ($line =~ /^#!/ && $. == 1) { # translate #! line 
@@ -83,7 +84,7 @@ sub isVar {
 
     while ($i <= $#arrayLine) {
         $temp = $arrayLine[$i];
-        if ($temp =~ /$math/){
+        if ($temp =~ /$operators/){
             print " $temp ";
         }
         else {
@@ -103,7 +104,7 @@ sub loopFunc {
         if ($arrayLine[$i] =~ /$loops/) {
             print "$arrayLine[$i] (";
         }
-        elsif ($arrayLine[$i] =~ /$math/) {
+        elsif ($arrayLine[$i] =~ /$operators/) {
             print "$arrayLine[$i] ";
         } 
         else {
