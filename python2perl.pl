@@ -17,57 +17,31 @@ while ($line = <>) {
     } 
 
     elsif ($line =~ /^\s*\w+\s*\=\s*\w*$/) { # eg var = 43;
-        splitBySpaces($line);
-        while ($i <= $#arrayLine) {
-            $temp = $arrayLine[$i];
-            if ($temp =~ /$math/){
-                print " $temp ";
-            }
-            else {
-                print looks_like_number($temp)? '' : '$' , "$temp"; #if the elt is a string print a $ infront of it coz its a variable
-            }
-            $i++;
-        }            
-        print "\;\n";
+        @arrayLine = split (" ", $line);
+        $i = 0;
+        isVar($line);
     }
 
     elsif ($line =~ /^\s*if/) {
         @ifParts = split (":", $line);
         $j = 0;
-        #print "if (";
+        
         while ($j <= $#ifParts) {
-            if ($ifParts[$j] =~ "if") {
-                $part = splitBySpaces($ifParts[$j]);
-                if ($part eq if) { 
-                    print "if (";
-                }
-                elsif ($line =~ /^\s*\w+\s*\=\s*\w*$/){
-
-                }
-
-                print ") {\n"
+            $temp1 = $ifParts[$j];
+            if ($temp1 =~ /if/) {
+                ifFunc($temp1);
             } else {
-                print $ifParts[$j] "\n}\n";
+                isVar($temp1);
             }
-        $j++;
+
+            $j++;
         }
+        print "\}\n";
     }
 
     elsif ($line =~ /^\s*print/) {
-        splitBySpaces($line);
-        while ($i <= $#arrayLine) {
-            $temp = $arrayLine[$i];      # goes through the array and sets temp to each elt in the array
-            
-            if ($temp =~ /print/) {      # if the elt is a print line then..
-                print "print ";
-            }
-
-            else {
-                print looks_like_number($temp)? '' : '$' , "$temp"; # sub1 if the elt is a string print a $ infront of it coz its a variable
-            }
-            $i++;
-        }
-        print ";\nprint \"\\n\";\n"; #force it to print/output the new line
+        @arrayLine = split (" ", $line);
+        printing(@arrayLine);
 
 
         # Python's print print a new-line character by default
@@ -81,16 +55,32 @@ while ($line = <>) {
     }
 }
 
-sub splitBySpaces {
-    $line = shift;
-    @arrayLine = split (" ", $line);
+sub printing {
+    @arrayLine = @_;
     $i = 0;
+
+    while ($i <= $#arrayLine) {
+        $temp = $arrayLine[$i];      # goes through the array and sets temp to each elt in the array
+        
+        if ($temp =~ /print/) {      # if the elt is a print line then..
+            print "print ";
+        }
+
+        else {
+            print looks_like_number($temp)? '' : '$' , "$temp"; # sub1 if the elt is a string print a $ infront of it coz its a variable
+        }
+        $i++;
+    }
+    print ";\nprint \"\\n\";\n";
 }
+
 
 sub isVar {
     $line = shift;
     #if ($line =~ /^\s*\w+\s*\=\s*\w*$/) { # eg var = 43;
-    splitBySpaces($line);
+    @arrayLine = split (" ", $line);
+    $i = 0;
+
     while ($i <= $#arrayLine) {
         $temp = $arrayLine[$i];
         if ($temp =~ /$math/){
@@ -102,6 +92,26 @@ sub isVar {
         $i++;
     }            
     print "\;\n";
+}
+
+sub ifFunc {
+    $line = shift;
+    @arrayLine = split (" ", $line);
+    
+    $i = 0;
+    while ($i <= $#arrayLine) {
+        if ($arrayLine[$i] =~ /if/) {
+            print "$arrayLine[$i] (";
+        }
+        elsif ($arrayLine[$i] =~ /$math/) {
+            print "$arrayLine[$i] ";
+        } 
+        else {
+            print looks_like_number($arrayLine[$i])? '' : '$' , "$arrayLine[$i] ";
+        }
+        $i++;
+    }
+    print "\) \{\n";
 }
 
 
