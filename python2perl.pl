@@ -5,7 +5,7 @@
 
 use Scalar::Util qw(looks_like_number);
 my $math = "[\+\-\/\%\=\>\<\*]";
-
+my $loops = "(if|while)";
 
 while ($line = <>) {
     if ($line =~ /^#!/ && $. == 1) { # translate #! line 
@@ -22,14 +22,14 @@ while ($line = <>) {
         isVar($line);
     }
 
-    elsif ($line =~ /^\s*if/) {
+    elsif ($line =~ /^\s*$loops/) {
         @ifParts = split (":", $line);
         $j = 0;
         
         while ($j <= $#ifParts) {
             $temp1 = $ifParts[$j];
-            if ($temp1 =~ /if/) {
-                ifFunc($temp1);
+            if ($temp1 =~ /$loops/) {
+                loopFunc($temp1);
             } else {
                 isVar($temp1);
             }
@@ -94,13 +94,13 @@ sub isVar {
     print "\;\n";
 }
 
-sub ifFunc {
+sub loopFunc {
     $line = shift;
     @arrayLine = split (" ", $line);
     
     $i = 0;
     while ($i <= $#arrayLine) {
-        if ($arrayLine[$i] =~ /if/) {
+        if ($arrayLine[$i] =~ /$loops/) {
             print "$arrayLine[$i] (";
         }
         elsif ($arrayLine[$i] =~ /$math/) {
