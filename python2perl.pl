@@ -24,14 +24,17 @@ while ($line = <>) {
     }
 
     elsif ($line =~ /^\s*$loops/) {
-        @ifParts = split (":", $line);
+        @ifParts = split ("[:|;]", $line);
         $j = 0;
         
         while ($j <= $#ifParts) {
             $temp1 = $ifParts[$j];
             if ($temp1 =~ /$loops/) {
                 loopFunc($temp1);
-            } else {
+            } elsif ($temp1 =~ /print/) {
+                printing($temp1);
+            }
+            else {
                 isVar($temp1);
             }
 
@@ -41,8 +44,7 @@ while ($line = <>) {
     }
 
     elsif ($line =~ /^\s*print/) {
-        @arrayLine = split (" ", $line);
-        printing(@arrayLine);
+        printing($line);
 
 
         # Python's print print a new-line character by default
@@ -57,7 +59,8 @@ while ($line = <>) {
 }
 
 sub printing {
-    @arrayLine = @_;
+    my $line = shift;
+    @arrayLine = split(' ', $line);
     $i = 0;
 
     while ($i <= $#arrayLine) {
